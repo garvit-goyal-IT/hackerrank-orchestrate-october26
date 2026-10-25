@@ -1,5 +1,5 @@
 const {readCsv} = require("./loadData.js");
-const {findUserByEmail ,findUserByAnyEmail, resolveUser,isDeletionRequest } = require("./identity.js")
+const {findUserByEmail ,findUserByAnyEmail, resolveUser,isDeletionRequest,isUsable } = require("./function.js")
 
 const deletion_requests= readCsv("deletion_requests.csv");
 const user_identities= readCsv("user_identities.csv");
@@ -50,8 +50,22 @@ for (const request of deletion_requests){
 //     count++;
 // }
 
+let yes=0,no=0,unsure=0;
+
 for(const request of deletion_requests){
     const request_text= request.request_text.trim().toLowerCase();
 
-    console.log(request.case_id ,isDeletionRequest(request_text))
+    if(isDeletionRequest(request_text, deletion_rules)=="YES"){
+        yes++;
+    }else if(isDeletionRequest(request_text, deletion_rules)=="NO"){
+        no++;
+    }else{
+        unsure++;
+    }
 }
+
+let count=0;
+for(const req of evidence_files){
+    if(isUsable(req.captured_at,"2026-09-08T13:40:00Z")) count++;
+}
+
